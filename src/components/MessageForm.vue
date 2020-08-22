@@ -57,6 +57,7 @@ export default class MessageForm extends Vue {
 
   handleCancel() {
     console.log("cancel");
+    this.$emit("cancel-dialog");
   }
 }
 </script>
