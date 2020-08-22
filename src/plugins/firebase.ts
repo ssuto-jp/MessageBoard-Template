@@ -1,9 +1,9 @@
-import * as firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/firestorage"
-import "firebase/auth"
-import "firebase/functions"
-import "firebase/analytics"
+import * as firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/storage";
+import "firebase/auth";
+import "firebase/functions";
+import "firebase/analytics";
 
 import { firebaseConfig } from "@/config/firebase-config.ts";
 

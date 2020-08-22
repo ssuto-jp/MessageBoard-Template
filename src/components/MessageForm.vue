@@ -30,6 +30,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { db, firestore } from "@/plugins/firebase";
 
 @Component
 export default class MessageForm extends Vue {
@@ -54,6 +55,17 @@ export default class MessageForm extends Vue {
     (v: string) =>
       (!!v && v.length <= 1000) || "Message must be less than 1000 characters",
   ];
+
+  async handlePost() {
+    const doc = db.collection("message-board").doc();
+    await doc.set({
+      messageId: doc.id,
+      timeCreated: firestore.FieldValue.serverTimestamp(),
+      title: this.title,
+      name: this.name,
+      message: this.message,
+    });
+  }
 
   handleCancel() {
     console.log("cancel");
