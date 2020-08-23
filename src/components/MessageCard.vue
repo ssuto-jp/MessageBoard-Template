@@ -7,9 +7,15 @@
           class="pa-3"
         >{{ message.name }} {{ message.timeCreated && message.timeCreated.toDate().toLocaleString() }}</v-card-subtitle>
         <v-card-text class="pa-3 font-weight-medium">{{ message.message }}</v-card-text>
-        <div class="pa-3" align="end">
-          <v-btn>Comment</v-btn>
-        </div>
+
+        <v-dialog v-model="dialog" persistent max-width="600px">
+          <template v-slot:activator="{ on }">
+            <div class="pa-3" align="end">
+              <v-btn v-on="on">Comment</v-btn>
+            </div>
+          </template>
+          <comment-form v-on:cancel-dialog="handelDialog()" />
+        </v-dialog>
 
         <comment-card />
       </v-card>
@@ -21,13 +27,21 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import CommentCard from "@/components/CommentCard.vue";
+import CommentForm from "@/components/CommentForm.vue";
 
 @Component({
   components: {
     CommentCard,
+    CommentForm,
   },
 })
 export default class MessageCard extends Vue {
   @Prop(Object) readonly message: object | undefined;
+
+  dialog = false;
+
+  handleDialog() {
+    this.dialog = !this.dialog;
+  }
 }
 </script>
