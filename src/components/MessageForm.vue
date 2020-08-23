@@ -57,19 +57,33 @@ export default class MessageForm extends Vue {
   ];
 
   async handlePost() {
-    const doc = db.collection("message-board").doc();
-    await doc.set({
-      messageId: doc.id,
-      timeCreated: firestore.FieldValue.serverTimestamp(),
-      title: this.title,
-      name: this.name,
-      message: this.message,
-    });
+    if (this.validate) {
+      const doc = db.collection("message-board").doc();
+      await doc.set({
+        messageId: doc.id,
+        timeCreated: firestore.FieldValue.serverTimestamp(),
+        title: this.title,
+        name: this.name,
+        message: this.message,
+      });
+
+      this.handleCancel();
+    } else {
+      console.log("Failed post");
+    }
   }
 
   handleCancel() {
-    console.log("cancel");
     this.$emit("cancel-dialog");
+    this.handleReset();
+  }
+
+  handleReset() {
+    (this.$refs.form as Vue & { reset: () => boolean }).reset();
+  }
+
+  get validate(): boolean {
+    return (this.$refs.form as Vue & { validate: () => boolean }).validate();
   }
 }
 </script>
