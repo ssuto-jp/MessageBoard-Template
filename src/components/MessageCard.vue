@@ -14,10 +14,15 @@
               <v-btn v-on="on">Comment</v-btn>
             </div>
           </template>
-          <comment-form v-on:cancel-dialog="handelDialog()" />
+          <comment-form v-on:cancel-dialog="handleDialog()" :messageId="message.messageId" />
         </v-dialog>
 
-        <comment-card />
+        <comment-card
+          v-for="(comment, i) in filterdComments(message.messageId)"
+          :key="i"
+          :comment="comment"
+          :messageId="message.messageId"
+        />
       </v-card>
     </v-col>
   </v-row>
@@ -37,11 +42,16 @@ import CommentForm from "@/components/CommentForm.vue";
 })
 export default class MessageCard extends Vue {
   @Prop(Object) readonly message: object | undefined;
+  @Prop({ type: Array, required: true }) readonly comments!: Array<any>;
 
   dialog = false;
 
   handleDialog() {
     this.dialog = !this.dialog;
+  }
+
+  filterdComments(messageId: string) {
+    return this.comments.filter((comment) => comment.messageId == messageId);
   }
 }
 </script>

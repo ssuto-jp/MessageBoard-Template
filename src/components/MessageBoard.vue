@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 <template>
   <v-container>
-    <message-card v-for="(message, i) in messages" :key="i" :message="message" />
+    <message-card
+      v-for="(message, i) in messages"
+      :key="i"
+      :message="message"
+      :comments="comments"
+    />
   </v-container>
 </template>
 
@@ -18,15 +23,32 @@ import { db } from "@/plugins/firebase";
   },
 })
 export default class MessageBoard extends Vue {
-  detacher: Unsubscribe | undefined = undefined;
+  messageDetacher: Unsubscribe | undefined = undefined;
+  commentDetacher: Unsubscribe | undefined = undefined;
   messages: Array<Record<string, any>> = [];
+  comments: Array<Record<string, any>> = [];
 
   created() {
-    this.detacher = db.collection("message-board").onSnapshot((snapshot) => {
-      this.messages = snapshot.docs.map((doc) => {
-        return Object.assign(doc.data());
+    this.messageDetacher = db
+      .collection("message-board")
+      .onSnapshot((snapshot) => {
+        this.messages = snapshot.docs.map((doc) => {
+          return Object.assign(doc.data());
+        });
       });
-    });
+
+    this.commentDetacher = db
+      .collectionGroup("comments")
+      .onSnapshot((snapshot) => {
+        this.comments = snapshot.docs.map((doc) => {
+          return Object.assign(doc.data());
+        });
+      });
+  }
+
+  destoryed() {
+    this.messageDetacher && this.messageDetacher();
+    this.commentDetacher && this.commentDetacher();
   }
 }
 </script>

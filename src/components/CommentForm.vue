@@ -28,10 +28,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
+import { db, firestore } from "@/plugins/firebase";
 
 @Component
 export default class CommentForm extends Vue {
+  @Prop(String) readonly messageId: string | undefined;
+
   name = "";
   comment = "";
   nameCount = 10;
@@ -49,12 +52,26 @@ export default class CommentForm extends Vue {
       `Comment must be less than ${this.commentCount} characters`,
   ];
 
-  handlePost() {
-    console.log("post");
+  async handlePost() {
+    if (this.validate) {
+      await db
+        .collection("message-board")
+        .doc(this.messageId)
+        .collection("comments")
+        .add({
+          messageId: this.messageId,
+          timeCreated: firestore.FieldValue.serverTimestamp(),
+          name: this.name,
+          comment: this.comment,
+        });
+
+      this.handleCancel();
+    } else {
+      console.log("Failed post");
+    }
   }
 
   handleCancel() {
-    console.log("cancel");
     this.$emit("cancel-dialog");
     this.handleReset();
   }
