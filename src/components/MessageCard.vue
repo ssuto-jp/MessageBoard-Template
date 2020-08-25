@@ -6,7 +6,7 @@
         <v-card-subtitle
           class="pa-3"
         >{{ message.name }} {{ message.timeCreated && message.timeCreated.toDate().toLocaleString() }}</v-card-subtitle>
-        <v-card-text class="pa-3 font-weight-medium">{{ message.message }}</v-card-text>
+        <v-card-text class="pa-3 font-weight-medium">{{ message.content }}</v-card-text>
 
         <v-dialog v-model="dialog" persistent max-width="600px">
           <template v-slot:activator="{ on }">
@@ -14,14 +14,14 @@
               <v-btn v-on="on">Comment</v-btn>
             </div>
           </template>
-          <comment-form v-on:cancel-dialog="handleDialog()" :messageId="message.messageId" />
+          <comment-form v-on:cancel-dialog="handleDialog()" :postId="message.postId" />
         </v-dialog>
 
         <comment-card
-          v-for="(comment, i) in filterdComments(message.messageId)"
+          v-for="(comment, i) in filterdComments(message.postId)"
           :key="i"
           :comment="comment"
-          :messageId="message.messageId"
+          :postId="message.postId"
         />
       </v-card>
     </v-col>
@@ -50,8 +50,8 @@ export default class MessageCard extends Vue {
     this.dialog = !this.dialog;
   }
 
-  filterdComments(messageId: string) {
-    return this.comments.filter((comment) => comment.messageId == messageId);
+  filterdComments(postId: string) {
+    return this.comments.filter((comment) => comment.postId == postId);
   }
 }
 </script>

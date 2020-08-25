@@ -10,12 +10,12 @@
         <v-container fluid>
           <v-textarea
             label="Message"
-            v-model="message"
+            v-model="content"
             filled
             auto-grow
             rows="3"
-            :counter="messageCount"
-            :rules="messageRules"
+            :counter="contentCount"
+            :rules="contentRules"
           ></v-textarea>
         </v-container>
       </v-card-text>
@@ -36,10 +36,10 @@ import { db, firestore } from "@/plugins/firebase";
 export default class MessageForm extends Vue {
   title = "";
   name = "";
-  message = "";
+  content = "";
   titleCount = 30;
   nameCount = 10;
-  messageCount = 1000;
+  contentCount = 1000;
   titleRules = [
     (v: string) => !!v || "Title is required",
     (v: string) =>
@@ -50,7 +50,7 @@ export default class MessageForm extends Vue {
     (v: string) =>
       (!!v && v.length <= 10) || "Name must be less than 10 characters",
   ];
-  messageRules = [
+  contentRules = [
     (v: string) => !!v || "Message is required",
     (v: string) =>
       (!!v && v.length <= 1000) || "Message must be less than 1000 characters",
@@ -60,11 +60,11 @@ export default class MessageForm extends Vue {
     if (this.validate) {
       const doc = db.collection("message-board").doc();
       await doc.set({
-        messageId: doc.id,
+        postId: doc.id,
         timeCreated: firestore.FieldValue.serverTimestamp(),
         title: this.title,
         name: this.name,
-        message: this.message,
+        content: this.content,
       });
 
       this.handleCancel();

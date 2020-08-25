@@ -4,7 +4,7 @@
       <v-card-subtitle
         class="pa-3"
       >{{ comment.name }} {{ comment.timeCreated && comment.timeCreated.toDate().toLocaleString() }}</v-card-subtitle>
-      <v-card-text class="pa-3 font-weight-medium">{{ comment.comment }}</v-card-text>
+      <v-card-text class="pa-3 font-weight-medium">{{ comment.content }}</v-card-text>
 
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
@@ -12,7 +12,7 @@
             <v-btn v-on="on">Comment</v-btn>
           </div>
         </template>
-        <comment-form v-on:cancel-dialog="handleDialog()" :messageId="messageId" />
+        <comment-form v-on:cancel-dialog="handleDialog()" :postId="postId" />
       </v-dialog>
     </v-card>
   </v-col>
@@ -29,7 +29,7 @@ import CommentForm from "@/components/CommentForm.vue";
   },
 })
 export default class CommentCard extends Vue {
-  @Prop(String) readonly messageId: string | undefined;
+  @Prop(String) readonly postId: string | undefined;
   @Prop(Object) readonly comment: object | undefined;
 
   dialog = false;

@@ -9,12 +9,12 @@
         <v-container fluid>
           <v-textarea
             label="Comment"
-            v-model="comment"
+            v-model="content"
             filled
             auto-grow
             rows="3"
-            :counter="commentCount"
-            :rules="commentRules"
+            :counter="contentCount"
+            :rules="contentRules"
           ></v-textarea>
         </v-container>
       </v-card-text>
@@ -33,36 +33,36 @@ import { db, firestore } from "@/plugins/firebase";
 
 @Component
 export default class CommentForm extends Vue {
-  @Prop(String) readonly messageId: string | undefined;
+  @Prop(String) readonly postId: string | undefined;
 
   name = "";
-  comment = "";
+  content = "";
   nameCount = 10;
-  commentCount = 1000;
+  contentCount = 1000;
   nameRules = [
     (v: string) => !!v || "Name is required",
     (v: string) =>
       (!!v && v.length <= this.nameCount) ||
       `Name must be less than ${this.nameCount} characters`,
   ];
-  commentRules = [
+  contentRules = [
     (v: string) => !!v || "Comment is required",
     (v: string) =>
-      (!!v && v.length <= this.commentCount) ||
-      `Comment must be less than ${this.commentCount} characters`,
+      (!!v && v.length <= this.contentCount) ||
+      `Comment must be less than ${this.contentCount} characters`,
   ];
 
   async handlePost() {
     if (this.validate) {
       await db
         .collection("message-board")
-        .doc(this.messageId)
+        .doc(this.postId)
         .collection("comments")
         .add({
-          messageId: this.messageId,
+          postId: this.postId,
           timeCreated: firestore.FieldValue.serverTimestamp(),
           name: this.name,
-          comment: this.comment,
+          content: this.content,
         });
 
       this.handleCancel();
