@@ -10,14 +10,16 @@
     :contentRules="contentRules"
     @post="handlePost()"
     @cancel="handleCancel()"
-  />
+  >
+    <v-text-field label="Title" v-model="items.title" :counter="titleMaxLength" :rules="titleRules"></v-text-field>
+  </base-form>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import BaseForm from "@/components/BaseForm.vue";
 import { db, firestore } from "@/plugins/firebase";
+import BaseForm from "@/components/BaseForm.vue";
 
 @Component({
   components: {

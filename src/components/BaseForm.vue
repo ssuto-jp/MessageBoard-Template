@@ -2,15 +2,10 @@
   <v-card>
     <v-form ref="form">
       <v-card-title>
-        <span class="headline">{{header}} Form</span>
+        <span class="headline">{{ header }} Form</span>
       </v-card-title>
       <v-card-text>
-        <v-text-field
-          label="Title"
-          @input="updateValue('title', $event)"
-          :counter="titleMaxLength"
-          :rules="titleRules"
-        ></v-text-field>
+        <slot></slot>
         <v-text-field
           label="Name"
           @input="updateValue('name', $event)"
@@ -44,8 +39,6 @@ import { Component, Prop } from "vue-property-decorator";
 @Component
 export default class BaseForm extends Vue {
   @Prop({ type: String, required: true }) readonly header!: string;
-  @Prop({ type: Number, required: false }) readonly titleMaxLength!: number;
-  @Prop({ type: Array, required: false }) readonly titleRules!: Array<object>;
   @Prop({ type: Number, required: true }) readonly nameMaxLength!: number;
   @Prop({ type: Array, required: true }) readonly nameRules!: Array<object>;
   @Prop({ type: Number, required: true }) readonly contentMaxLength!: number;
