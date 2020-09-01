@@ -1,87 +1,65 @@
 <template>
-  <v-card>
-    <v-form ref="form">
-      <v-card-title>
-        <span class="headline">Comment Form</span>
-      </v-card-title>
-      <v-card-text>
-        <v-text-field label="Name" v-model="name" :counter="nameCount" :rules="nameRules"></v-text-field>
-        <v-container fluid>
-          <v-textarea
-            label="Comment"
-            v-model="content"
-            filled
-            auto-grow
-            rows="3"
-            :counter="contentCount"
-            :rules="contentRules"
-          ></v-textarea>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn class="white--text" color="blue" @click="handlePost()">Post</v-btn>
-        <v-btn @click="handleCancel()">Cancel</v-btn>
-      </v-card-actions>
-    </v-form>
-  </v-card>
+  <base-form
+    v-bind.sync="items"
+    :header="header"
+    :nameMaxLength="nameMaxLength"
+    :nameRules="nameRules"
+    :contentMaxLength="contentMaxLength"
+    :contentRules="contentRules"
+    @post="handlePost()"
+    @cancel="handleCancel()"
+  />
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { db, firestore } from "@/plugins/firebase";
+import BaseForm from "@/components/BaseForm.vue";
 
-@Component
+@Component({
+  components: {
+    BaseForm,
+  },
+})
 export default class CommentForm extends Vue {
   @Prop(String) readonly postId: string | undefined;
 
-  name = "";
-  content = "";
-  nameCount = 10;
-  contentCount = 1000;
+  header = "Comment";
+  items = {
+    name: "",
+    content: "",
+  };
+  nameMaxLength = 10;
   nameRules = [
     (v: string) => !!v || "Name is required",
     (v: string) =>
-      (!!v && v.length <= this.nameCount) ||
-      `Name must be less than ${this.nameCount} characters`,
+      (!!v && v.length <= this.nameMaxLength) ||
+      `Name must be less than ${this.nameMaxLength} characters`,
   ];
+  contentMaxLength = 1000;
   contentRules = [
     (v: string) => !!v || "Comment is required",
     (v: string) =>
-      (!!v && v.length <= this.contentCount) ||
-      `Comment must be less than ${this.contentCount} characters`,
+      (!!v && v.length <= this.contentMaxLength) ||
+      `Comment must be less than ${this.contentMaxLength} characters`,
   ];
 
   async handlePost() {
-    if (this.validate) {
-      await db
-        .collection("message-board")
-        .doc(this.postId)
-        .collection("comments")
-        .add({
-          postId: this.postId,
-          timeCreated: firestore.FieldValue.serverTimestamp(),
-          name: this.name,
-          content: this.content,
-        });
-
-      this.handleCancel();
-    } else {
-      console.log("Failed post");
-    }
+    await db
+      .collection("message-board")
+      .doc(this.postId)
+      .collection("comments")
+      .add({
+        postId: this.postId,
+        timeCreated: firestore.FieldValue.serverTimestamp(),
+        name: this.items.name,
+        content: this.items.content,
+      });
   }
 
   handleCancel() {
     this.$emit("cancel-dialog");
-    this.handleReset();
-  }
-
-  handleReset() {
-    (this.$refs.form as Vue & { reset: () => boolean }).reset();
-  }
-
-  get validate(): boolean {
-    return (this.$refs.form as Vue & { validate: () => boolean }).validate();
   }
 }
 </script>
