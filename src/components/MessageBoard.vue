@@ -30,6 +30,7 @@ export default class MessageBoard extends Vue {
   created() {
     this.messageDetacher = db
       .collection("message-board")
+      .orderBy("timeCreated", "desc")
       .onSnapshot((snapshot) => {
         this.messages = snapshot.docs.map((doc) => {
           return Object.assign(doc.data());
@@ -38,6 +39,7 @@ export default class MessageBoard extends Vue {
 
     this.commentDetacher = db
       .collectionGroup("comments")
+      .orderBy("timeCreated")
       .onSnapshot((snapshot) => {
         this.comments = snapshot.docs.map((doc) => {
           return Object.assign(doc.data());
