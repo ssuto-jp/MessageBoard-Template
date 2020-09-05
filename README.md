@@ -1,10 +1,8 @@
 # message-board-template
 
 ## Overview
-```
 This is a template of message board.Vue.js is used for the frontend and Firebase for the backend.
 This template use Vuetify for UI framework.
-```
 
 ## Quick Start Guide
 Steps:
